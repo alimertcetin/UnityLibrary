@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   level: 0
   upgradePower: 0
-  type: 0
+  type: 4
