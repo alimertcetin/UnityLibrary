@@ -1,4 +1,6 @@
 ﻿
+// TODO : UpgradeContainer, UpgradeDBSO - Better search for upgrade types
+
 // TODO : Create a template for upgrades like Damage, Speed, Health
 I think these are the most used upgrades
 

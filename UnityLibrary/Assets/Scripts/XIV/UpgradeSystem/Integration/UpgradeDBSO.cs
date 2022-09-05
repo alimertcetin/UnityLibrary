@@ -27,7 +27,7 @@ namespace XIV.UpgradeSystem.Integration
             availables = new List<IUpgrade<PlayerUpgrade>>();
             foreach (string typeNameOfUpgrade in allUpgrades.Keys)
             {
-                var upgradeType = allUpgrades[typeNameOfUpgrade][0].GetType();
+                var upgradeType = allUpgrades[typeNameOfUpgrade][0].upgradeType;
                 if (upgradeContainer.ContainsType(upgradeType, out var current))
                 {
                     if (TryGetNextLevelOf(current, out var nextLevel))

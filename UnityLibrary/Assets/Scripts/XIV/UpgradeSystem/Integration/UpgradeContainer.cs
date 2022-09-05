@@ -17,7 +17,7 @@ namespace XIV.UpgradeSystem.Integration
 
         public bool TryAdd(IUpgrade<T> item)
         {
-            if (ContainsType(item.GetType(), out int currentIndex))
+            if (TryGetIndexOfType(item.upgradeType, out int currentIndex))
             {
                 if (upgradeList[currentIndex].IsBetterThan(item))
                 {
@@ -59,16 +59,15 @@ namespace XIV.UpgradeSystem.Integration
             return -1;
         }
 
-        public bool ContainsType(Type type, out IUpgrade<T> current)
+        public bool TryGetIndexOfType(T type, out int currentIndex)
         {
-            current = default;
-            if (type != typeof(IUpgrade<PlayerUpgrade>)) return false;
+            currentIndex = -1;
             
             for (int i = 0; i < upgradeList.Count; i++)
             {
-                if (upgradeList[i].GetType() == type)
+                if (upgradeList[i].upgradeType.Equals(type))
                 {
-                    current = upgradeList[i];
+                    currentIndex = i;
                     return true;
                 }
             }
@@ -76,20 +75,15 @@ namespace XIV.UpgradeSystem.Integration
             return false;
         }
 
-        bool ContainsType(Type type, out int currentIndex)
+        public bool ContainsType(T type, out IUpgrade<T> current)
         {
-            currentIndex = -1;
-            if (type != typeof(IUpgrade<PlayerUpgrade>)) return false;
-            
-            for (int i = 0; i < upgradeList.Count; i++)
+            if (TryGetIndexOfType(type, out int currentIndex))
             {
-                if (upgradeList[i].GetType() == type)
-                {
-                    currentIndex = i;
-                    return true;
-                }
+                current = upgradeList[currentIndex];
+                return true;
             }
 
+            current = default;
             return false;
         }
     }

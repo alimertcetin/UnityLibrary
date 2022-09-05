@@ -11,6 +11,6 @@ namespace XIV.UpgradeSystem
         public bool TryAdd(IUpgrade<TUpgrade> item);
         public bool TryRemove(IUpgrade<TUpgrade> item);
         public bool Contains(IUpgrade<TUpgrade> other);
-        public bool ContainsType(Type type, out IUpgrade<TUpgrade> current);
+        public bool ContainsType(TUpgrade type, out IUpgrade<TUpgrade> current);
     }
 }

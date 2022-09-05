@@ -19,7 +19,7 @@ namespace XIV.UpgradeSystem.Examples
             else if (other.TryGetComponent<Enemy>(out var enemy))
             {
                 var damageToDeal = damageAmount;
-                if (playerUpgrades.ContainsType(typeof(DamageUpgradeSO), out var damageUpgrade))
+                if (playerUpgrades.ContainsType(PlayerUpgrade.Damage, out var damageUpgrade))
                 {
                     damageToDeal = UpgradeUtils.BoostUsingPercentage(damageToDeal, damageUpgrade);
                 }

@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: DamageUpgradeSO_1
   m_EditorClassIdentifier: 
   level: 1
-  upgradePower: 0
+  power: 17.7
   type: 2
