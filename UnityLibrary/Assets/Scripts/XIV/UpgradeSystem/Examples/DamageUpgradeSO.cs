@@ -1,22 +1,22 @@
 ﻿using System;
 using UnityEngine;
-using XIV.UpgradeSystem.Implementation;
+using XIV.UpgradeSystem.Integration;
 
 namespace XIV.UpgradeSystem.Examples
 {
     [CreateAssetMenu(menuName = Constants.MenuName + "DamageUpgrade")]
-    public class DamageUpgrade : Upgrade<PlayerUpgrade>
+    public class DamageUpgradeSO : UpgradeSO<PlayerUpgrade>
     {
         public override bool IsBetterThan(IUpgrade<PlayerUpgrade> other)
         {
-            if (other is not DamageUpgrade otherUpgrade) return false;
+            if (other is not DamageUpgradeSO otherUpgrade) return false;
 
             return this.upgradeLevel > otherUpgrade.upgradeLevel;
         }
 
         public override bool Equals(IUpgrade<PlayerUpgrade> other)
         {
-            if (other is not DamageUpgrade otherUpgrade) return false;
+            if (other is not DamageUpgradeSO otherUpgrade) return false;
             
             return upgradeLevel == otherUpgrade.upgradeLevel && upgradeType == otherUpgrade.upgradeType;
         }
@@ -29,7 +29,7 @@ namespace XIV.UpgradeSystem.Examples
 #if UNITY_EDITOR
         protected override void GetName(out string name, out int instanceID)
         {
-            name = nameof(DamageUpgrade) + "_" + upgradeLevel;
+            name = nameof(DamageUpgradeSO) + "_" + upgradeLevel;
             instanceID = this.GetInstanceID();
         }
 #endif

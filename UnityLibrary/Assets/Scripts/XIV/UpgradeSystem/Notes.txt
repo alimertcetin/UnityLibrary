@@ -1,0 +1,5 @@
+﻿
+// TODO : Create a template for upgrades like Damage, Speed, Health
+I think these are the most used upgrades
+
+// TODO : UI Integration Examples - ECS kicks in

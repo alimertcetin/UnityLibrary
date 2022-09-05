@@ -1,4 +1,4 @@
-﻿namespace XIV.UpgradeSystem
+﻿namespace XIV.UpgradeSystem.Examples
 {
     public enum PlayerUpgrade
     {

@@ -2,19 +2,20 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace XIV.UpgradeSystem.Implementation
+namespace XIV.UpgradeSystem.Integration
 {
-    public abstract class Upgrade<T> : ScriptableObject, IUpgrade<T> where T : Enum
+    public abstract class UpgradeSO<T> : ScriptableObject, IUpgrade<T> where T : Enum
     {
         [SerializeField] int level;
-        [SerializeField] float upgradePower;
+        [SerializeField] float power;
         [SerializeField] T type;
         public int upgradeLevel => level;
         public T upgradeType => type;
+        public float upgradePower => power;
         
         public abstract bool IsBetterThan(IUpgrade<T> other);
         public abstract bool Equals(IUpgrade<T> other);
-
+        
 #if UNITY_EDITOR
         /// <summary>
         /// Make sure overriden method is editor only
@@ -35,8 +36,15 @@ namespace XIV.UpgradeSystem.Implementation
             var nameOfAsset = splitedPath[splitedPath.Length - 1];
             if (name != nameOfAsset)
             {
-                AssetDatabase.RenameAsset(assetPath, name);
-                AssetDatabase.SaveAssets();
+                var error = AssetDatabase.RenameAsset(assetPath, name);
+                if (string.IsNullOrEmpty(error) == false)
+                {
+                    Debug.LogError("Couldnt rename the asset. " + error);
+                }
+                else
+                {
+                    AssetDatabase.SaveAssets();
+                }
             }
         }
 #endif

@@ -1,10 +1,23 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using UnityEditor;
+using UnityEngine;
+using XIV.UpgradeSystem.DataStructures;
+using XIV.UpgradeSystem.Examples;
+using XIV.UpgradeSystem.Utils;
 
-namespace XIV.UpgradeSystem
+namespace XIV.UpgradeSystem.Integration
 {
-    public class UpgradeDB : IUpgradeDB<PlayerUpgrade>
+    [System.Serializable]
+    public sealed class UpgradeDictionary : SerializedDictionaryBase<string, CustomSerializedList<UpgradeSO<PlayerUpgrade>>>
     {
-        public Dictionary<string, List<IUpgrade<PlayerUpgrade>>> allUpgrades;
+            
+    }
+
+    [CreateAssetMenu(menuName = "Game/UpgradeDB", order = -99)]
+    public class UpgradeDBSO : ScriptableObject, IUpgradeDB<PlayerUpgrade>
+    {
+        public UpgradeDictionary allUpgrades;
 
         IEnumerable<IUpgrade<PlayerUpgrade>> IUpgradeDB<PlayerUpgrade>.upgradeCollection => GetUpgrades();
 
@@ -34,7 +47,7 @@ namespace XIV.UpgradeSystem
         public bool TryGetNextLevelOf(IUpgrade<PlayerUpgrade> current, out IUpgrade<PlayerUpgrade> nextLevel)
         {
             nextLevel = default;
-            List<IUpgrade<PlayerUpgrade>> upgradeOfTypeList = allUpgrades[current.GetType().Name];
+            List<UpgradeSO<PlayerUpgrade>> upgradeOfTypeList = allUpgrades[current.GetType().Name];
             var count = upgradeOfTypeList.Count;
             for (int i = 0; i < count; i++)
             {
@@ -49,7 +62,7 @@ namespace XIV.UpgradeSystem
         public bool TryGetFirstLevelOf(IUpgrade<PlayerUpgrade> current, out IUpgrade<PlayerUpgrade> first)
         {
             first = default;
-            List<IUpgrade<PlayerUpgrade>> upgradeOfTypeList = allUpgrades[current.GetType().Name];
+            List<UpgradeSO<PlayerUpgrade>> upgradeOfTypeList = allUpgrades[current.GetType().Name];
             for (int i = 0; i < upgradeOfTypeList.Count; i++)
             {
                 if (upgradeOfTypeList[i].upgradeLevel != 1) continue;
@@ -62,15 +75,34 @@ namespace XIV.UpgradeSystem
 
         public IEnumerable<IUpgrade<PlayerUpgrade>> GetUpgrades()
         {
-            Dictionary<string, List<IUpgrade<PlayerUpgrade>>>.ValueCollection values = allUpgrades.Values;
+            var values = allUpgrades.Values;
 
-            foreach (List<IUpgrade<PlayerUpgrade>> upgrades in values)
+            foreach (List<UpgradeSO<PlayerUpgrade>> upgrades in values)
             {
-                foreach (IUpgrade<PlayerUpgrade> upgrade in upgrades)
+                foreach (UpgradeSO<PlayerUpgrade> upgrade in upgrades)
                 {
                     yield return upgrade;
                 }
             }
         }
+        
+#if UNITY_EDITOR
+        [TextArea]
+        public string UpgradeFolderPath = "Assets/Scripts/UpgradeSystem/Examples";
+        
+        public void LoadUpgrades()
+        {
+            Undo.RegisterCompleteObjectUndo(this, "Load Upgrades");
+            allUpgrades.Clear();
+            var upgrades = AssetUtils.LoadAssets<UpgradeSO<PlayerUpgrade>, CustomSerializedList<UpgradeSO<PlayerUpgrade>>>(UpgradeFolderPath);
+            foreach (Type key in upgrades.Keys)
+            {
+                allUpgrades.Add(key.Name, upgrades[key]);
+            }
+            EditorUtility.SetDirty(this);
+            AssetDatabase.SaveAssetIfDirty(this);
+        }
+#endif
+        
     }
 }

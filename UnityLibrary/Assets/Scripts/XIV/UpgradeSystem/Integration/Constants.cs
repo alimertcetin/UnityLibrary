@@ -1,4 +1,4 @@
-﻿namespace XIV.UpgradeSystem.Implementation
+﻿namespace XIV.UpgradeSystem.Integration
 {
     public static class Constants
     {

@@ -1,19 +1,21 @@
 ﻿using System;
 using UnityEditor;
 using UnityEngine;
-using XIV.UpgradeSystem.Implementation;
+using XIV.UpgradeSystem.Integration;
 
 namespace XIV.UpgradeSystem.Editor
 {
-    [CustomEditor(typeof(Upgrade<Enum>))]
-    public class UpgradeInspector : UnityEditor.Editor
+    [CustomEditor(typeof(UpgradeSO<>), true)]
+    public class UpgradeSOEditor : UnityEditor.Editor
     {
         public override void OnInspectorGUI()
         {
+            //TODO : Draw Key-Value pair correctly
+            //TODO : Ability to new Keys
             DrawDefaultInspector();
-            var upgradeSO = target as Upgrade<Enum>;
             if (GUILayout.Button("Fix Name"))
             {
+                var upgradeSO = (dynamic)target;
                 upgradeSO.FixName();
             }
         }
