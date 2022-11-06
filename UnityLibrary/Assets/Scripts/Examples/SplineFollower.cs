@@ -19,7 +19,7 @@ namespace Examples
 			timePassed = (timePassed + Time.deltaTime) % totalMovementDuration;
 			var normalizedTime = timePassed / totalMovementDuration;
 
-			var pos = spline.GetPoint(normalizedTime);
+			var pos = spline.transform.TransformPoint(spline.GetPoint(normalizedTime));
 			transform.position = pos;
 		}
 	}
