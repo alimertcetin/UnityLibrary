@@ -1,4 +1,4 @@
-﻿namespace XIV
+﻿namespace XIV.Math
 {
 	public struct Vec3
 	{

@@ -1,4 +1,6 @@
-﻿namespace XIV.Spline
+﻿using XIV.Math;
+
+namespace XIV.Spline
 {
     using UnityEngine;
     using System;

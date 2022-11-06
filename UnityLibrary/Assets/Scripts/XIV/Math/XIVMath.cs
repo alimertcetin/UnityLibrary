@@ -1,4 +1,4 @@
-﻿namespace XIV
+﻿namespace XIV.Math
 {
 	public static class XIVMath
 	{

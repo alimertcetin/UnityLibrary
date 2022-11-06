@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace XIV.Spline
+namespace XIV.Math
 {
     /// <summary>
     /// Cubic Bezier Math class

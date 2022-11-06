@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using XIV.Math;
 
 namespace XIV.Spline
 {
