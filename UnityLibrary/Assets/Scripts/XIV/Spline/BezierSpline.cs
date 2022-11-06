@@ -12,64 +12,52 @@ namespace XIV.Spline
 
         [SerializeField] Vector3[] points;
 
-        public Vector3 GetControlPoint(int index)
+        public Vector3 GetPoint(int index)
         {
             return points[index];
         }
 
-        public void SetControlPoint(int index, Vector3 point)
+        public void SetPoint(int index, Vector3 point)
         {
             points[index] = point;
         }
 
         public void AddCurve()
         {
-            Vector3 point = points[points.Length - 1];
-            Array.Resize(ref points, points.Length + 3);
-            point.x += 1f;
-            points[points.Length - 3] = point;
-            point.x += 1f;
-            points[points.Length - 2] = point;
-            point.x += 1f;
-            points[points.Length - 1] = point;
+            Vector3[] newPoints = SplineUtils.NewCurveAtPosition(points[^1]);
+            int pointsLength = points.Length;
+            Array.Resize(ref points, pointsLength + newPoints.Length);
+            for (int i = 0; i < newPoints.Length; i++)
+            {
+                points[pointsLength + i] = newPoints[i];
+            }
+        }
+
+        public bool RemoveCurve(int index)
+        {
+            var isRemoved = SplineUtils.RemoveCurve(points, index, out var newPoints);
+            if (isRemoved)
+            {
+                int newSize = newPoints.Length;
+                Array.Resize(ref points, newSize);
+                for (int i = 0; i < newSize; i++)
+                {
+                    points[i] = newPoints[i];
+                }
+                return true;
+            }
+
+            return false;
         }
 
         public Vector3 GetPointCubic(float t)
         {
-            int i;
-            if (t >= 1f)
-            {
-                t = 1f;
-                i = points.Length - 4;
-            }
-            else
-            {
-                t = Mathf.Clamp01(t) * CurveCount;
-                i = (int)t;
-                t -= i;
-                i *= 3;
-            }
-
-            return transform.TransformPoint(Bezier.GetPointCubic(points[i], points[i + 1], points[i + 2], points[i + 3], t));
+            return transform.TransformPoint(SplineMath.GetPointCubic(points, t));
         }
 
         public Vector3 GetVelocityCubic(float t)
         {
-            int i;
-            if (t >= 1f)
-            {
-                t = 1f;
-                i = points.Length - 4;
-            }
-            else
-            {
-                t = Mathf.Clamp01(t) * CurveCount;
-                i = (int)t;
-                t -= i;
-                i *= 3;
-            }
-
-            return transform.TransformPoint(Bezier.GetFirstDerivativeCubic(points[i], points[i + 1], points[i + 2], points[i + 3], t)) - transform.position;
+            return transform.TransformPoint(SplineMath.GetVelocityCubic(points, t)) - transform.position;
         }
 
         public Vector3 GetDirection(float t)
