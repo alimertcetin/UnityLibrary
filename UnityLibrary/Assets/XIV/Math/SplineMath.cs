@@ -83,5 +83,21 @@
 		{
 			return IndexOfControlPoint(index) != index;
 		}
+
+		public static float GetLength(IList<Vector3> points, int stepsPerCurve = 10)
+		{
+			int steps = stepsPerCurve * ((points.Count - 1) / 3);
+			var p0 = GetPoint(points, 0);
+			float length = 0f;
+			for (int i = 1; i <= steps; i++)
+			{
+				float t = i / (float)steps;
+				var p1 = GetPoint(points, t);
+				length += (p0 - p1).magnitude;
+				p0 = p1;
+			}
+
+			return length;
+		}
 	}
 }
