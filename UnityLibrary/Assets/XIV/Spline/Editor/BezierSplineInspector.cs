@@ -24,6 +24,8 @@
             bezierSpline = target as BezierSpline;
             bezierSplineTransform = bezierSpline.transform;
             bezierSplineTransform.hideFlags = HideFlags.NotEditable | HideFlags.HideInInspector;
+            
+            bezierSpline.CalculateSplineLength();
         }
 
         void OnDisable()
@@ -37,6 +39,8 @@
 
         public override void OnInspectorGUI()
         {
+            GUILayout.Label("Spline Length : " + bezierSpline.Length);
+            
             if (selectedIndex >= 0 && selectedIndex < bezierSpline.PointCount)
             {
                 DrawSelectedPointInspector();

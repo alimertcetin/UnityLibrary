@@ -1,9 +1,10 @@
 ﻿namespace XIV.Spline
 {
-    using UnityEngine;
     using System;
+    using System.Collections.Generic;
+    using UnityEngine;
     using XIV.Math;
-
+    
     public class BezierSpline : MonoBehaviour
     {
         public int CurveCount => (points.Length - 1) / 3;
@@ -11,6 +12,18 @@
         public int PointCount => points.Length;
 
         [SerializeField] Vector3[] points;
+
+        public float Length;
+
+        void Awake()
+        {
+            CalculateSplineLength();
+        }
+
+        public void CalculateSplineLength()
+        {
+            Length = SplineMath.GetLength(points);
+        }
 
         /// <summary>
         /// Returns local space point at giving <paramref name="index"/>
@@ -28,6 +41,7 @@
         public void SetPoint(int index, Vector3 point)
         {
             points[index] = point;
+            Length = SplineMath.GetLength(points);
         }
 
         /// <summary>
@@ -42,6 +56,7 @@
             {
                 points[pointsLength + i] = newPoints[i];
             }
+            Length = SplineMath.GetLength(points);
         }
 
         /// <summary>
@@ -60,6 +75,7 @@
                 {
                     points[i] = newPoints[i];
                 }
+                Length = SplineMath.GetLength(points);
                 return true;
             }
 
@@ -95,6 +111,15 @@
             return GetVelocity(t).normalized;
         }
 
+        public IEnumerable<Vector3> Points()
+        {
+            int lenght = points.Length;
+            for (int i = 0; i < lenght; i++)
+            {
+                yield return points[i];
+            }
+        }
+
         public void Reset()
         {
             points = new Vector3[]
@@ -104,6 +129,7 @@
                 new Vector3(6f, 0f, 4f),
                 new Vector3(6f, 0f, 0f)
             };
+            Length = SplineMath.GetLength(points);
         }
     }
 }
