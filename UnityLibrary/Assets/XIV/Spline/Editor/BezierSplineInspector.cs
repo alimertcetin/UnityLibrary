@@ -19,6 +19,8 @@
         Transform bezierSplineTransform;
         Quaternion handleRotation;
 
+        float t;
+
         void OnEnable()
         {
             bezierSpline = target as BezierSpline;
@@ -39,6 +41,14 @@
 
         public override void OnInspectorGUI()
         {
+            EditorGUI.BeginChangeCheck();
+            t = EditorGUILayout.Slider(t, 0, 1);
+            if (EditorGUI.EndChangeCheck())
+            {
+                Undo.RecordObject(bezierSpline, "Move Point");
+                SceneView.lastActiveSceneView.Repaint();
+            }
+            
             GUILayout.Label("Spline Length : " + bezierSpline.Length);
             
             if (selectedIndex >= 0 && selectedIndex < bezierSpline.PointCount)
@@ -117,6 +127,8 @@
         void OnSceneGUI()
         {
             handleRotation = Tools.pivotRotation == PivotRotation.Local ? bezierSplineTransform.rotation : Quaternion.identity;
+            
+            DrawPointAtT();
 
             Vector3 p0 = ShowPoint(0, false);
             for (int i = 1; i < bezierSpline.PointCount; i += 3)
@@ -134,6 +146,51 @@
             }
 
             ShowDirections();
+        }
+
+        void DrawPointAtT()
+        {
+            var point = bezierSplineTransform.TransformPoint(bezierSpline.GetPoint(t));
+            DrawSphere(point, .05f, Color.magenta, 30);
+        }
+
+        const float TAU = 6.283185307179586f;
+
+        void DrawSphere(Vector3 position, float radius, Color color, int steps = 10)
+        {
+            int sphereStep = 10;
+            for (int i = 0; i < sphereStep; i++)
+            {
+                float radian = (float)i / sphereStep * TAU;
+                var dir = Vector3.RotateTowards(Vector3.forward, Vector3.back, radian, radian);
+                DrawCircle(position, dir.normalized, radius, color, steps);
+            }
+        }
+        void DrawCircle(Vector3 position, Vector3 lookDir, float radius, Color color, int steps = 10)
+        {
+            DrawCircle(position, Quaternion.LookRotation(lookDir), radius, color, steps);
+        }
+        void DrawCircle(Vector3 position, Quaternion rotation, float radius, Color color, int steps = 10)
+        {
+            Handles.color = color;
+            for (int i = 0; i < steps; i++)
+            {
+                float p0Radian = (float)(i - 1) / steps * TAU;
+                float p1Radian = (float)i / steps * TAU;
+                Vector3 p0 = new Vector3
+                {
+                    x = Mathf.Cos(p0Radian) * radius,
+                    y = Mathf.Sin(p0Radian) * radius,
+                };
+                Vector3 p1 = new Vector3
+                {
+                    x = Mathf.Cos(p1Radian) * radius,
+                    y = Mathf.Sin(p1Radian) * radius,
+                };
+                p0 = position + rotation * p0;
+                p1 = position + rotation * p1;
+                Handles.DrawLine(p0, p1);
+            }
         }
 
         void ShowDirections()
