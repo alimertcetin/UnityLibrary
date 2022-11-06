@@ -95,6 +95,7 @@
                 //      cam.position = pivot + rotation * new Vector3(0, 0, -cameraDistance)
                 // Info: https://forum.unity.com/threads/moving-scene-scene_view-camera-from-editor-script.64920/#post-3388397
                 // But we can align it to an object! Source: http://answers.unity.com/answers/256969/scene_view.html
+                point = bezierSplineTransform.TransformPoint(point);
                 var sceneView = SceneView.lastActiveSceneView;
                 var camera = sceneView.camera;
                 var cameraPosition = camera.transform.position;
