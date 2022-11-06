@@ -1,7 +1,7 @@
-﻿using System.Text;
-
-namespace XIV.Utils
+﻿namespace XIV.Utils
 {
+    using System.Text;
+    
     public class ClassGenerator
     {
         class Builder

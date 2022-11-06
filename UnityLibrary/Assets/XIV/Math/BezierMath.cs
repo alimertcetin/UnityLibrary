@@ -1,7 +1,7 @@
-﻿using UnityEngine;
-
-namespace XIV.Math
+﻿namespace XIV.Math
 {
+    using UnityEngine;
+    
     /// <summary>
     /// Cubic Bezier Math class
     /// </summary>

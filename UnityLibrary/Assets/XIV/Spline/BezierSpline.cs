@@ -1,9 +1,8 @@
-﻿using XIV.Math;
-
-namespace XIV.Spline
+﻿namespace XIV.Spline
 {
     using UnityEngine;
     using System;
+    using XIV.Math;
 
     public class BezierSpline : MonoBehaviour
     {
