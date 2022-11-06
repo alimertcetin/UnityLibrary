@@ -3,9 +3,18 @@ using UnityEngine;
 
 namespace XIV.Spline
 {
+	/// <summary>
+	/// Spline Math for Cubic Bezier Curves
+	/// </summary>
 	public static class SplineMath
 	{
-		public static Vector3 GetPointCubic(IList<Vector3> points, float t)
+		/// <summary>
+		/// Returns the point at giving <paramref name="t"/> time
+		/// </summary>
+		/// <param name="points">Spline points</param>
+		/// <param name="t">Time between 0 and 1</param>
+		/// <returns>The point at giving <paramref name="t"/> time</returns>
+		public static Vector3 GetPoint(IList<Vector3> points, float t)
 		{
 			int curveCount = (points.Count - 1) / 3;
 			int index;
@@ -22,10 +31,16 @@ namespace XIV.Spline
 				index *= 3;
 			}
 
-			return Bezier.GetPointCubic(points[index], points[index + 1], points[index + 2], points[index + 3], t);
+			return BezierMath.GetPoint(points[index], points[index + 1], points[index + 2], points[index + 3], t);
 		}
         
-		public static Vector3 GetVelocityCubic(IList<Vector3> points, float t)
+		/// <summary>
+		/// Returns the Velocity of spline at <paramref name="t"/> point
+		/// </summary>
+		/// <param name="points">Spline points</param>
+		/// <param name="t">Time between 0 and 1</param>
+		/// <returns>The Velocity of spline at <paramref name="t"/> point</returns>
+		public static Vector3 GetVelocity(IList<Vector3> points, float t)
 		{
 			int curveCount = (points.Count - 1) / 3;
 			int index;
@@ -42,7 +57,7 @@ namespace XIV.Spline
 				index *= 3;
 			}
 
-			return Bezier.GetFirstDerivativeCubic(points[index], points[index + 1], points[index + 2], points[index + 3], t);
+			return BezierMath.GetFirstDerivative(points[index], points[index + 1], points[index + 2], points[index + 3], t);
 		}
         
 		/// <summary>

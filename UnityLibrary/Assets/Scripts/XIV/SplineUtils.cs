@@ -5,11 +5,19 @@ namespace XIV.Spline
 {
 	public static class SplineUtils
 	{
+		/// <summary>
+		/// Returns an array of points for the new curve
+		/// </summary>
+		/// <returns>An array of points for the new curve</returns>
 		public static Vector3[] NewCurve()
 		{
 			return NewCurveAtPosition(Vector3.zero);
 		}
 		
+		/// <summary>
+		/// Returns an array of points for the new curve
+		/// </summary>
+		/// <returns>An array of points for the new curve</returns>
 		public static Vector3[] NewCurveAtPosition(Vector3 point)
 		{
 			Vector3[] points = new Vector3[3];
@@ -25,6 +33,13 @@ namespace XIV.Spline
 			return points;
 		}
 		
+		/// <summary>
+		/// Tries to remove curve from <paramref name="points"/> and returns true if removed. Can't remove first and last curves
+		/// </summary>
+		/// <param name="points">The spline points</param>
+		/// <param name="index">Index of point (Curve will be search depending on it)</param>
+		/// <param name="newPoints">The new points of spline</param>
+		/// <returns>True if curve removed, false otherwise</returns>
 		public static bool RemoveCurve(IList<Vector3> points, int index, out Vector3[] newPoints)
 		{
 			if (index <= 1 || index >= points.Count - 2)

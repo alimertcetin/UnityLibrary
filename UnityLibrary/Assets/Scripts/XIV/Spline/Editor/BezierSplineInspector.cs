@@ -6,6 +6,7 @@
     [CustomEditor(typeof(BezierSpline))]
     public class BezierSplineInspector : Editor
     {
+        const float focusDistance = 4f;
         const float directionScale = 0.5f;
         const int stepsPerCurve = 10;
 
@@ -23,15 +24,6 @@
             bezierSpline = target as BezierSpline;
             bezierSplineTransform = bezierSpline.transform;
             bezierSplineTransform.hideFlags = HideFlags.NotEditable | HideFlags.HideInInspector;
-
-            if (bezierSplineTransform.position != Vector3.zero)
-            {
-                Undo.RecordObject(bezierSplineTransform, "Initialize Spline");
-                bezierSplineTransform.position = Vector3.zero;
-                EditorUtility.SetDirty(bezierSplineTransform);
-            }
-
-            Tools.hidden = true;
         }
 
         void OnDisable()
@@ -45,9 +37,14 @@
 
         public override void OnInspectorGUI()
         {
-            if (selectedIndex >= 0 && selectedIndex < bezierSpline.ControlPointCount)
+            if (selectedIndex >= 0 && selectedIndex < bezierSpline.PointCount)
             {
                 DrawSelectedPointInspector();
+                Tools.hidden = true;
+            }
+            else
+            {
+                Tools.hidden = false;
             }
 
             if (GUILayout.Button("Add Curve"))
@@ -63,6 +60,15 @@
                 bezierSpline.RemoveCurve(selectedIndex);
                 EditorUtility.SetDirty(bezierSpline);
             }
+
+            if (GUILayout.Button("Clear Selection"))
+            {
+                if (selectedIndex != -1)
+                {
+                    selectedIndex = -1;
+                    SceneView.RepaintAll();
+                }
+            }
         }
 
 
@@ -77,6 +83,30 @@
                 EditorUtility.SetDirty(bezierSpline);
                 bezierSpline.SetPoint(selectedIndex, point);
             }
+
+            if (GUILayout.Button("Focus"))
+            {
+                // Can't set transform of camera :(
+                // It internally updates every frame:
+                //      cam.position = pivot + rotation * new Vector3(0, 0, -cameraDistance)
+                // Info: https://forum.unity.com/threads/moving-scene-scene_view-camera-from-editor-script.64920/#post-3388397
+                // But we can align it to an object! Source: http://answers.unity.com/answers/256969/scene_view.html
+                var sceneView = SceneView.lastActiveSceneView;
+                var camera = sceneView.camera;
+                var cameraPosition = camera.transform.position;
+                var directionToPoint = point - cameraPosition;
+            
+                var targetPos = point;
+                targetPos -= directionToPoint.normalized * focusDistance;
+                
+                sceneView.orthographic = false;
+ 
+                camera.transform.position = targetPos;
+                camera.transform.rotation = Quaternion.LookRotation(directionToPoint.normalized);
+                sceneView.AlignViewToObject(camera.transform);
+            }
+            
+            GUILayout.Space(10f);
         }
 
         void OnSceneGUI()
@@ -84,7 +114,7 @@
             handleRotation = Tools.pivotRotation == PivotRotation.Local ? bezierSplineTransform.rotation : Quaternion.identity;
 
             Vector3 p0 = ShowPoint(0, false);
-            for (int i = 1; i < bezierSpline.ControlPointCount; i += 3)
+            for (int i = 1; i < bezierSpline.PointCount; i += 3)
             {
                 Vector3 p1 = ShowPoint(i, true);
                 Vector3 p2 = ShowPoint(i + 1, true);
@@ -104,13 +134,13 @@
         void ShowDirections()
         {
             Handles.color = Color.green;
-            Vector3 point = bezierSpline.GetPointCubic(0f);
+            Vector3 point = bezierSplineTransform.TransformPoint(bezierSpline.GetPoint(0f));
             Handles.DrawLine(point, point + bezierSpline.GetDirection(0f) * directionScale);
             int steps = stepsPerCurve * bezierSpline.CurveCount;
             for (int i = 1; i <= steps; i++)
             {
                 float t = i / (float)steps;
-                point = bezierSpline.GetPointCubic(t);
+                point = bezierSplineTransform.TransformPoint(bezierSpline.GetPoint(t));
                 Handles.DrawLine(point, point + bezierSpline.GetDirection(t) * directionScale);
             }
         }
@@ -132,7 +162,7 @@
                 if (isAnchor == false)
                 {
                     MoveWithAnchors(index);
-                    return bezierSpline.GetPoint(index);
+                    return bezierSplineTransform.TransformPoint(bezierSpline.GetPoint(index));
                 }
                 EditorGUI.BeginChangeCheck();
                 point = Handles.DoPositionHandle(point, handleRotation);
@@ -153,7 +183,7 @@
             int previousIndex = controlIndex - 1;
             int nextIndex = controlIndex + 1;
             bool isPreviousAvailable = previousIndex > 0;
-            bool isNextAvailable = nextIndex < bezierSpline.ControlPointCount;
+            bool isNextAvailable = nextIndex < bezierSpline.PointCount;
             
             Vector3 controlPoint = bezierSplineTransform.TransformPoint(bezierSpline.GetPoint(controlIndex));
 
