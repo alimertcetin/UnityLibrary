@@ -117,5 +117,37 @@
 
 			return mid;
 		}
+		
+		/*
+		 * Created using OpenAI Assistant
+		 */
+		public static float Abs(float x)
+		{
+			return (x < 0) ? -x : x;
+		}
+		
+		/*
+		 * Created using OpenAI Assistant - Newton-Raphson method
+		 */
+		public static float SqrtV2(float x)
+		{
+			if (x < 0)
+			{
+				return float.NaN;
+			}
+
+			float result = x;
+			float prevResult;
+			do
+			{
+				prevResult = result;
+				result = (result + x / result) * 0.5f;
+			} while (Abs(result - prevResult) > 0.00001f);
+
+			return result;
+		}
+		
+		
+
 	}
 }
