@@ -1,6 +1,6 @@
 ﻿namespace XIV.Math
 {
-	public static class XIVMath
+	public static class XIVMathf
 	{
 		public static float Epsilon = float.Epsilon;
 		public static float Clamp01(float val)

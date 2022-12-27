@@ -18,7 +18,7 @@
 		public static readonly Vec3 negativeInfinity = new Vec3(float.NegativeInfinity, float.NegativeInfinity, float.NegativeInfinity);
 
 		public float sqrMagnitude => x * x + y * y + z * z;
-		public float magnitude => XIVMath.Sqrt(x * x + y * y + z * z);
+		public float magnitude => XIVMathf.Sqrt(x * x + y * y + z * z);
 		
 		public Vec3(float x, float y, float z)
 		{
@@ -35,7 +35,7 @@
 			float diffSqrMagnitude = xDiff * xDiff + yDiff * yDiff + zDiff * zDiff;
 			if (diffSqrMagnitude == 0f || movement >= 0f && diffSqrMagnitude <= movement * movement)
 				return target;
-			float diffMagnitude = XIVMath.Sqrt(diffSqrMagnitude);
+			float diffMagnitude = XIVMathf.Sqrt(diffSqrMagnitude);
 			return new Vec3(current.x + xDiff / diffMagnitude * movement,
 				current.y + yDiff / diffMagnitude * movement,
 				current.z + zDiff / diffMagnitude * movement);
@@ -43,7 +43,7 @@
 
 		public static Vec3 Lerp(Vec3 a, Vec3 b, float t)
 		{
-			t = XIVMath.Clamp01(t);
+			t = XIVMathf.Clamp01(t);
 			return new Vec3(a.x + (b.x - a.x) * t, a.y + (b.y - a.y) * t, a.z + (b.z - a.z) * t);
 		}
 
@@ -72,7 +72,7 @@
 
 		public static float Magnitude(Vec3 vec)
 		{
-			return XIVMath.Sqrt(vec.x * vec.x + vec.y * vec.y + vec.z * vec.z);
+			return XIVMathf.Sqrt(vec.x * vec.x + vec.y * vec.y + vec.z * vec.z);
 		}
 
 		public static Vec3 operator -(Vec3 a, Vec3 b)
